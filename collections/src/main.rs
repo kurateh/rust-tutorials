@@ -67,14 +67,14 @@ fn convert_to_pig_latin(str: &str) -> Option<String> {
         return None;
     }
 
-    let char_vec: Vec<char> = str.chars().collect();
-    Some(match char_vec[0] {
+    let mut chars = str.chars();
+    let first_char = chars.next()?;
+
+    Some(match first_char {
         'a' | 'e' | 'i' | 'o' | 'u' => format!("{str}-hay"),
         _ => {
-            let first = char_vec[0];
-            let rest: String = char_vec[1..].into_iter().collect();
-
-            format!("{rest}-{first}ay")
+            let rest: String = chars.collect();
+            format!("{rest}-{first_char}ay")
         }
     })
 }
@@ -106,29 +106,32 @@ impl Company {
     fn get_people_in_department(&self, department: &str) -> Option<Vec<&str>> {
         let hash_map = &self.0;
 
-        hash_map
-            .get(department)
-            .map(|s| s.iter().map(String::as_str).collect())
+        hash_map.get(department).map(|s| {
+            let mut people: Vec<&str> = s.iter().map(String::as_str).collect();
+            people.sort();
+            people
+        })
     }
 
     // Add <department> <person>
     // Get [-a | -d <department>]
     fn command(&mut self, string: &str) {
-        let string: Vec<&str> = string.split_whitespace().collect();
+        let parts: Vec<&str> = string.split_whitespace().collect();
 
-        if string.is_empty() {
+        if parts.is_empty() {
             return;
         }
 
-        match string[0].to_lowercase().as_str() {
-            "add" => {
-                if let (Some(&department), Some(&person), None) =
-                    (string.get(1), string.get(2), string.get(3))
-                {
-                    self.add_person(department, person);
-                }
+        let command = parts[0];
+
+        if command.eq_ignore_ascii_case("add") {
+            if let (Some(&department), Some(&person), None) =
+                (parts.get(1), parts.get(2), parts.get(3))
+            {
+                self.add_person(department, person);
             }
-            "get" => match (string.get(1), string.get(2), string.get(3)) {
+        } else if command.eq_ignore_ascii_case("get") {
+            match (parts.get(1), parts.get(2), parts.get(3)) {
                 (Some(&"-a"), None, None) => {
                     println!("{:?}", self.get_all_sorted_people());
                 }
@@ -143,8 +146,7 @@ impl Company {
                     }
                 }
                 _ => {}
-            },
-            _ => {}
+            }
         }
     }
 }
