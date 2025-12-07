@@ -3,6 +3,10 @@
 version = 4
 
 [[package]]
+name = "backyard"
+version = "0.1.0"
+
+[[package]]
 name = "cfg-if"
 version = "1.0.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -91,6 +95,10 @@ dependencies = [
 
 [[package]]
 name = "rectangles"
+version = "0.1.0"
+
+[[package]]
+name = "restaurant"
 version = "0.1.0"
 
 [[package]]
