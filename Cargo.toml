@@ -1,3 +1,3 @@
 [workspace]
 
-members = [ "backyard","guessing_game", "rectangles", "restaurant", "variables"]
+members = [ "backyard", "collections","guessing_game", "rectangles", "restaurant", "variables"]
