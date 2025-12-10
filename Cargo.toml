@@ -1,3 +1,12 @@
 [workspace]
 
-members = [ "backyard", "collections","guessing_game", "rectangles", "restaurant", "variables"]
+members = [
+  "aggregator",
+  "backyard",
+  "collections",
+  "guessing_game",
+  "rectangles",
+  "restaurant",
+  "variables",
+]
+resolver = "3"
