@@ -1,6 +1,7 @@
 [workspace]
 
 members = [
+  "test",
   "aggregator",
   "backyard",
   "collections",
