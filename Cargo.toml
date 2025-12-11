@@ -10,5 +10,6 @@ members = [
   "restaurant",
   "variables",
   "minigrep",
+  "closure",
 ]
 resolver = "3"
