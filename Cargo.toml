@@ -9,5 +9,6 @@ members = [
   "rectangles",
   "restaurant",
   "variables",
+  "minigrep",
 ]
 resolver = "3"
