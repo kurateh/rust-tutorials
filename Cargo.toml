@@ -11,6 +11,6 @@ members = [
   "variables",
   "minigrep",
   "closure",
-  "smart_pointer", "limit_tracker", "concurrency",
+  "smart_pointer", "limit_tracker", "concurrency", "oop", "blog",
 ]
 resolver = "3"
