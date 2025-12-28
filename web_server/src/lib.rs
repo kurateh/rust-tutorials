@@ -6,15 +6,15 @@ use std::{
 };
 
 pub struct ThreadPool {
-    _workers: Vec<Worker>,
-    sender: mpsc::Sender<Job>,
+    workers: Vec<Worker>,
+    sender: Option<mpsc::Sender<Job>>,
 }
 
 type Job = Box<dyn FnOnce() + Send + 'static>;
 
 struct Worker {
-    _id: usize,
-    _thread: thread::JoinHandle<()>,
+    id: usize,
+    thread: Option<thread::JoinHandle<()>>,
 }
 
 impl Worker {
@@ -22,15 +22,24 @@ impl Worker {
         let thread = thread::spawn(move || {
             loop {
                 // `receiver.lock()`에서 임시로 얻은 `MutexGuard`는 job을 얻는 순간 버려짐 => unlock
-                let job = receiver.lock().unwrap().recv().unwrap();
-                println!("Worker {id} got a job; executing.");
+                let message = receiver.lock().unwrap().recv();
 
-                job();
+                match message {
+                    Ok(job) => {
+                        println!("Worker {id} got a job; executing.");
+
+                        job();
+                    }
+                    Err(_) => {
+                        println!("Worker {id} disconnected; shutting down.");
+                        break;
+                    }
+                }
             }
         });
         Worker {
-            _id: id,
-            _thread: thread,
+            id,
+            thread: Some(thread),
         }
     }
 }
@@ -72,8 +81,8 @@ impl ThreadPool {
         }
 
         Ok(ThreadPool {
-            _workers: workers,
-            sender,
+            workers,
+            sender: Some(sender),
         })
     }
 
@@ -83,6 +92,20 @@ impl ThreadPool {
     {
         let job = Box::new(f);
 
-        self.sender.send(job).unwrap();
+        self.sender.as_ref().unwrap().send(job).unwrap();
+    }
+}
+
+impl Drop for ThreadPool {
+    fn drop(&mut self) {
+        drop(self.sender.take());
+
+        for worker in &mut self.workers {
+            println!("Shutting down worker {}", worker.id);
+
+            if let Some(thread) = worker.thread.take() {
+                thread.join().unwrap();
+            }
+        }
     }
 }
