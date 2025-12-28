@@ -16,6 +16,6 @@ members = [
   "concurrency",
   "oop",
   "blog",
-  "unsafe_code", "hello_macro", "hello_macro_derive",
+  "unsafe_code", "hello_macro", "hello_macro_derive", "web_server",
 ]
 resolver = "3"
